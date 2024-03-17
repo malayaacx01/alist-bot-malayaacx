@@ -19,7 +19,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.ALIST_GITHUB_TOKEN }}
 
-      - name: Build the Docker image
-        run: |
-          docker build . --file Dockerfile --tag ghcr.io/malayaacx01/alist-bot-malayaacx:latest 
-          docker push ghcr.io/malayaacx01/alist-bot-malayaacx:latest 
+      - name: Build the  Docker image
+        run:
+          |
+          docker build . --file Dockerfile --tag ghcr.io/z-mio/alist-bot:latest 
+          docker push ghcr.io/z-mio/alist-bot:latest 
