@@ -1,0 +1,13 @@
+cronjob:
+  auto_switch_nodes: true
+  bandwidth_push: true
+  chat_id:
+  status_push: true
+  storage_mgmt: true
+  time: '50 23 * * *'
+node:
+- account_id: 7bd42a7a505ca9ece7f9452508f85cc9
+  email: zulfadlizulkifli10@yahoo.com
+  global_api_key: 02938624228ae7c6ba6341bf25427d180280f
+  url: alistproxy.malayaacx.my.id
+  zone_id: f5e5bfff0e275eaead23f2ff6a88f9c3

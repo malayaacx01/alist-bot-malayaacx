@@ -1,0 +1,7 @@
+PyYAML
+APScheduler~=3.10.1
+croniter
+Pyrogram
+TgCrypto
+loguru
+httpx
