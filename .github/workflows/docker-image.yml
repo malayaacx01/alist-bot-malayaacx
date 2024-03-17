@@ -17,6 +17,7 @@ jobs:
         with:
           registry: ghcr.io
           username: malayaacx01
+          password: ${{ secrets.GH_PAT }}
 
       - name: Build the  Docker image
         run:
