@@ -1,51 +1,53 @@
+Alist - Bot Server By Malayaacx01 (English Version)
+
 # Telegram-AList bot
 
 [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=alist-org&repo=alist)](https://github.com/alist-org/alist)  
 
-**主要功能：**
+**The main function：**
 
-- [x] 搜索
-    - [x] 文件基本信息
-    - [x] 自定义结果数量
-    - [x] 文件直链
-- [x] 存储
-    - [x] 开关存储
-    - [x] 删除存储
-    - [x] 复制存储
-    - [x] 新建存储
-    - [x] 自动排序
-    - [x] 批量新建存储
-- [x] Cloudflare节点管理
-    - [x] 节点监控
-    - [x] 通知
-        - [x] 节点状态
-        - [x] 每日流量统计
-    - [x] 自动管理存储
-    - [x] 自动切换节点
-    - [x] cf账号管理
-- [x] Alist配置备份&定时备份
-- [x] Alist图床
-- [x] 随机推荐
+- [x] search
+    - [x] Basic file information
+    - [x] Custom number of results
+    - [x] File direct link
+- [x] storage
+    - [x] switch storage
+    - [x] delete storage
+    - [x] Copy storage
+    - [x] Create new storage
+    - [x] automatic sorting
+    - [x] Create new storage in batches
+- [x] Cloudflare node management
+    - [x] Node monitoring
+    - [x] notify
+        - [x] Node status
+        - [x] Daily traffic statistics
+    - [x] Automatically manage storage
+    - [x] Automatically switch nodes
+    - [x] cf account management
+- [x] Alist configuration backup & scheduled backup
+- [x] Alist picture bed
+- [x] Random recommendation
 
 
 
-### 功能预览&说明:
-
-<details>
-<summary><b>点击展开</b></summary>
-
+### Function preview & description:
 
 <details>
-<summary><b>搜索</b></summary>
+<summary><b>Click to expand</b></summary>
 
-![搜索预览图](https://img.155155155.xyz/2023/12/1703834393546.png)
+
+<details>
+<summary><b>search</b></summary>
+
+![Search preview](https://img.155155155.xyz/2023/12/1703834393546.png)
 
 </details>
 
 <details>
-<summary><b>配置备份</b></summary>
+<summary><b>Configuration backup</b></summary>
 
-可以回复消息来添加备注，可以重复修改
+Can reply to messages to add notes，Can be modified repeatedly
 
 ![配置备份](https://img.155155155.xyz/2023/12/1703835568828.gif)
 
