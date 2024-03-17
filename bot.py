@@ -107,7 +107,7 @@ async def menu(_, message: Message):
         a_bot_menu, scope=pyrogram.types.BotCommandScopeChat(chat_id=admin)
     )
     await app.set_bot_commands(b_bot_menu)
-    await message.reply("菜单设置成功，请退出聊天界面重新进入来刷新菜单")
+    await message.reply("Menu set up successfully，Please exit the chat interface and re-enter to refresh the menu.")
 
 
 # Back up alist configuration
@@ -139,7 +139,7 @@ async def echo_bot(_, message: Message):
         await app.edit_message_caption(
             chat_id=message.chat.id,
             message_id=message.reply_to_message_id,
-            caption=f"#Alist配置备份\n{message.text}",
+            caption=f"#Alist - Configuration backup\n{message.text}",
         )
 
 
@@ -147,7 +147,7 @@ async def echo_bot(_, message: Message):
 @app.on_message(filters.command("bc") & filters.private & is_admin)
 async def send_backup_file(_, message: Message):
     bc_file_name = backup_config()
-    await message.reply_document(document=bc_file_name, caption="#Alist配置备份")
+    await message.reply_document(document=bc_file_name, caption="#Alist - Configuration backup")
     os.remove(bc_file_name)
 
 
@@ -155,7 +155,7 @@ async def send_backup_file(_, message: Message):
 async def recovery_send_backup_file():
     bc_file_name = backup_config()
     await app.send_document(
-        chat_id=admin, document=bc_file_name, caption="#Alist配置定时备份"
+        chat_id=admin, document=bc_file_name, caption="#Alist - Configure scheduled backup"
     )
     os.remove(bc_file_name)
     logger.info("定时备份成功")
@@ -176,24 +176,24 @@ async def set_backup_time(_, message: Message):
                 job_id="send_backup_messages_regularly_id",
                 trigger=CronTrigger.from_crontab(backup_time()),
             )
-            text = f"修改成功！\n下一次备份时间：{next_run_time}"
+            text = f"Modification successful!\nNext backup time：{next_run_time}"
         else:
             aps.add_job(
                 func=recovery_send_backup_file,
                 trigger=CronTrigger.from_crontab(backup_time()),
                 job_id="send_backup_messages_regularly_id",
             )
-            text = f"已开启定时备份！\n下一次备份时间：{next_run_time}"
+            text = f"Scheduled backup has been turned on!\nNext backup time：{next_run_time}"
         await message.reply(text)
     elif mtime == "0":
         config["bot"]["backup_time"] = mtime
         write_config("config/config.yaml", config)
         aps.pause_job("send_backup_messages_regularly_id")
-        await message.reply("已关闭定时备份")
+        await message.reply("Scheduled backup is turned off")
     elif not mtime:
         text = f"""
 格式：/sbt + 5位cron表达式，0为关闭
-下一次备份时间：`{parse_cron(backup_time()) if backup_time() != '0' else '已关闭'}`
+Next backup time：`{parse_cron(backup_time()) if backup_time() != '0' else 'closed'}`
 
 例：
 <code>/sbt 0</code> 关闭定时备份
@@ -212,7 +212,7 @@ async def set_backup_time(_, message: Message):
 """
         await message.reply(text)
     else:
-        await message.reply("格式错误")
+        await message.reply("wrong format")
 
 
 #####################################################################################
@@ -233,7 +233,7 @@ def recovery_task():
             trigger=CronTrigger.from_crontab(backup_time()),
             job_id="send_backup_messages_regularly_id",
         )
-        logger.info("定时备份已启动")
+        logger.info("Scheduled backup has been started")
 
     if cloudflare_cfg["cronjob"]["bandwidth_push"]:
         aps.add_job(
@@ -242,7 +242,7 @@ def recovery_task():
             trigger=CronTrigger.from_crontab(cloudflare_cfg["cronjob"]["time"]),
             job_id="cronjob_bandwidth_push",
         )
-        logger.info("带宽通知已启动")
+        logger.info("Bandwidth notification activated")
 
     cronjob = cloudflare_cfg["cronjob"]
     if any(
@@ -255,7 +255,7 @@ def recovery_task():
             job_id="cronjob_status_push",
             seconds=10,
         )
-        logger.info("节点监控已启动")
+        logger.info("Node monitoring is started")
 
 
 # bot启动时验证
@@ -263,20 +263,20 @@ def examine():
     try:
         code = AListAPI.storage_list_()
     except json.decoder.JSONDecodeError:
-        logger.error("连接Alist失败，请检查配置alist_host是否填写正确")
+        logger.error("Failed to connect to Alist，Please check whether the configuration alist_host is filled in correctly")
         exit()
     except httpx.ReadTimeout:
-        logger.error("连接Alist超时，请检查网站状态")
+        logger.error("Connection Alist timed out，Please check website status")
         exit()
     else:
         if code["code"] == 401 and code["message"] == "that's not even a token":
-            logger.error("Alist token错误")
+            logger.error("Alist token error")
             exit()
     return
 
 
 if __name__ == "__main__":
-    logger.info("Bot开始运行...")
+    logger.info("Bot starts running...")
     examine()
     recovery_task()
     app.run()
