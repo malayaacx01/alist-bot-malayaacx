@@ -17,11 +17,11 @@ jobs:
         with:
           registry: ghcr.io
           username: malayaacx01
-          password: ${{ secrets.GH_PAT }}
+          password: ${{ secrets.GH_PAT }} & ${{ secrets.ALIST_GITHUB_TOKEN }}
 
       - name: Build the  Docker image
         run:
           |
-          docker login --username malayaacx01 --password ${{ secrets.GH_PAT }} ${{ secrets.ALIST_GITHUB_TOKEN }} ghcr.io
+          docker login --username malayaacx01 --password ${{ secrets.GH_PAT }} ghcr.io
           docker build . --file Dockerfile --tag ghcr.io/z-mio/alist-bot:latest 
           docker push ghcr.io/z-mio/alist-bot:latest 
