@@ -23,5 +23,5 @@ jobs:
         run:
           |
           docker login --username malayaacx01 --password ${{ secrets.GH_PAT }} ghcr.io
-          docker build . --file Dockerfile --tag ghcr.io/z-mio/alist-bot:latest 
-          docker push ghcr.io/z-mio/alist-bot:latest 
+          docker build . --file Dockerfile --tag ghcr.io/malayaacx01/alist-bot-malayaacx:latest 
+          docker push ghcr.io/malayaacx01/alist-bot-malayaacx:latest 
