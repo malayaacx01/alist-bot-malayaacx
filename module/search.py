@@ -22,9 +22,9 @@ async def sl(_, message: Message):
     if sl_str.isdigit():
         config["bot"]["search"]["per_page"] = int(sl_str)
         write_config("config/config.yaml", config)
-        await message.reply(f"已修改搜索结果数量为：{sl_str}")
+        await message.reply(f"The number of modified search results is：{sl_str}")
     else:
-        await message.reply("请输入正整数")
+        await message.reply("Please enter a positive integer")
 
 
 # 设置直链
@@ -33,20 +33,20 @@ async def zl(_, message: Message):
     zl_str = " ".join(message.command[1:])
     if zl_str == "1":
         config["bot"]["search"]["z_url"] = True
-        await message.reply("已开启直链")
+        await message.reply("Direct link enabled")
     elif zl_str == "0":
         config["bot"]["search"]["z_url"] = False
-        await message.reply("已关闭直链")
+        await message.reply("Direct link closed")
     else:
-        await message.reply("请在命令后加上1或0(1=开，0=关)")
+        await message.reply("Please add 1 or 0 after the command (1=on, 0=off)")
     write_config("config/config.yaml", config)
 
 
 chat_id_message = {}
 
 page_button = [
-    InlineKeyboardButton("⬆️上一页", callback_data="search_previous_page"),
-    InlineKeyboardButton("⬇️下一页", callback_data="search_next_page"),
+    InlineKeyboardButton("⬆️Previous page", callback_data="search_previous_page"),
+    InlineKeyboardButton("⬇️Next page", callback_data="search_next_page"),
 ]
 
 
@@ -57,16 +57,16 @@ async def s(_, message: Message):
         return
     s_str = " ".join(message.command[1:])
     if not s_str or "_bot" in s_str:
-        return await message.reply("请加上文件名，例：`/s 巧克力`")
+        return await message.reply("Please add the file name, for example: /s chocolate")
     # 搜索文件
     alist_post_json = await AListAPI.search(s_str)
 
     if not alist_post_json["data"]["content"]:
-        return await message.reply("未搜索到文件，换个关键词试试吧")
+        return await message.reply("No file found, try changing the keywords.")
     result_deduplication = [
         dict(t) for t in {tuple(d.items()) for d in alist_post_json["data"]["content"]}
     ]
-    msg = await message.reply("搜索中...")
+    msg = await message.reply("searching...")
 
     task = [get_(count, item) for count, item in enumerate(result_deduplication)]
     textx = await asyncio.gather(*task)
@@ -102,28 +102,28 @@ async def get_(count, item):
 
     # 获取文件直链
     if folder:
-        folder_tg_text = "📁文件夹："
+        folder_tg_text = "📁folder："
         z_folder_f = ""
         z_url_link = ""
     elif z_url():
-        folder_tg_text = "📄文件："
-        z_folder = "直接下载"
+        folder_tg_text = "📄document："
+        z_folder = "Download"
         z_folder_f = "|"
         r = await AListAPI.fs_get(f"{path}/{file_name}")
         z_url_link = f'<a href="{r["data"]["raw_url"]}">{z_folder}</a>'
     else:
-        folder_tg_text = "📄文件："
+        folder_tg_text = "📄document："
         z_folder_f = ""
         z_url_link = ""
 
     file_url = urllib.parse.quote(f"{alist_web}{path}/{file_name}", safe=":/")
     return f"""{count + 1}.{folder_tg_text}<code>{file_name}</code>
-<a href="{file_url}">🌐打开网站</a>|{z_url_link}{z_folder_f}大小: {pybyte(file_size)}
+<a href="{file_url}">🌐Open website</a>|{z_url_link}{z_folder_f}大小: {pybyte(file_size)}
 
 """
 
 
-# 翻页
+# Turn page
 @Client.on_callback_query(filters.regex(r"^search"))
 async def search_button_callback(_, query: CallbackQuery):
     data = query.data
