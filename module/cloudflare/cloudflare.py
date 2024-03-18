@@ -28,31 +28,31 @@ from tool.utils import is_admin
 from tool.utils import pybyte
 
 return_button = [
-    InlineKeyboardButton("↩️返回菜单", callback_data="cf_return"),
-    InlineKeyboardButton("❌关闭菜单", callback_data="cf_close"),
+    InlineKeyboardButton("↩️Return to menu", callback_data="cf_return"),
+    InlineKeyboardButton("❌Close menu", callback_data="cf_close"),
 ]
 
 
 def btn():
     return [
-        [InlineKeyboardButton("⚙️CF节点管理", callback_data="⚙️")],
+        [InlineKeyboardButton("⚙️CF node management", callback_data="⚙️")],
         [
-            InlineKeyboardButton("👀查看节点", callback_data="cf_menu_node_status"),
-            InlineKeyboardButton("📅通知设置", callback_data="cf_menu_cronjob"),
-            InlineKeyboardButton("🆔账号管理", callback_data="cf_menu_account"),
+            InlineKeyboardButton("👀View nodes", callback_data="cf_menu_node_status"),
+            InlineKeyboardButton("📅Notification settings", callback_data="cf_menu_cronjob"),
+            InlineKeyboardButton("🆔Account management", callback_data="cf_menu_account"),
         ],
         [
-            InlineKeyboardButton("⚡️功能开关", callback_data="⚡️"),
+            InlineKeyboardButton("⚡️Function switch", callback_data="⚡️"),
         ],
         [
             InlineKeyboardButton(
-                "✅节点状态推送" if cronjob()["status_push"] else "❎节点状态推送",
+                "✅Node status push" if cronjob()["status_push"] else "❎Node status push",
                 callback_data="status_push_off"
                 if cronjob()["status_push"]
                 else "status_push_on",
             ),
             InlineKeyboardButton(
-                "✅每日流量统计" if cronjob()["bandwidth_push"] else "❎每日流量统计",
+                "✅Daily traffic statistics" if cronjob()["bandwidth_push"] else "❎Daily traffic statistics",
                 callback_data="bandwidth_push_off"
                 if cronjob()["bandwidth_push"]
                 else "bandwidth_push_on",
@@ -60,20 +60,20 @@ def btn():
         ],
         [
             InlineKeyboardButton(
-                "✅自动管理存储" if cronjob()["storage_mgmt"] else "❎自动管理存储",
+                "✅Automatically manage storage" if cronjob()["storage_mgmt"] else "❎Automatically manage storage",
                 callback_data="storage_mgmt_off"
                 if cronjob()["storage_mgmt"]
                 else "storage_mgmt_on",
             ),
             InlineKeyboardButton(
-                "✅自动切换节点" if cronjob()["auto_switch_nodes"] else "❎自动切换节点",
+                "✅Automatically switch nodes" if cronjob()["auto_switch_nodes"] else "❎Automatically switch nodes",
                 callback_data="auto_switch_nodes_off"
                 if cronjob()["auto_switch_nodes"]
                 else "auto_switch_nodes_on",
             ),
         ],
         [
-            InlineKeyboardButton("❌关闭菜单", callback_data="cf_close"),
+            InlineKeyboardButton("❌Close menu", callback_data="cf_close"),
         ],
     ]
 
@@ -84,13 +84,13 @@ bandwidth_button_a = [
     InlineKeyboardButton("⭕️---", callback_data="gns_total_bandwidth"),
 ]
 bandwidth_button_b = [
-    InlineKeyboardButton("📈总请求：---", callback_data="gns_total_bandwidth"),
-    InlineKeyboardButton("📊总带宽：---", callback_data="gns_total_bandwidth"),
+    InlineKeyboardButton("📈total requests：---", callback_data="gns_total_bandwidth"),
+    InlineKeyboardButton("📊total bandwidth：---", callback_data="gns_total_bandwidth"),
 ]
 bandwidth_button_c = [
-    InlineKeyboardButton("🔙上一天", callback_data="gns_status_up"),
+    InlineKeyboardButton("🔙A day", callback_data="gns_status_up"),
     InlineKeyboardButton("---", callback_data="gns_status_calendar"),
-    InlineKeyboardButton("下一天🔜", callback_data="gns_status_down"),
+    InlineKeyboardButton("the next day🔜", callback_data="gns_status_down"),
 ]
 
 
@@ -102,7 +102,7 @@ bandwidth_button_c = [
 @Client.on_callback_query(filters.regex("^cf_close$"))
 async def cf_close_callback(_, query: CallbackQuery):
     chat_data["account_add"] = False
-    await query.message.edit(text="已退出『节点管理』")
+    await query.message.edit(text="Exited "Node Management"")
 
 
 @Client.on_callback_query(filters.regex("^cf_menu_account$"))
@@ -179,19 +179,19 @@ async def cf_aaa():
         results = [i[1] for i in await asyncio.gather(*task)]
 
         return f"""
-节点数量：{len(nodes)}
-🟢  正常：{results.count(200)}
-🔴  掉线：{results.count(429)}
-⭕️  错误：{results.count(501)}
+Number of nodes：{len(nodes)}
+🟢  normal：{results.count(200)}
+🔴  Dropped：{results.count(429)}
+⭕️  mistake：{results.count(501)}
 """
-    return "Cloudflare节点管理\n暂无账号，请先添加cf账号"
+    return "Cloudflare node management\nNo account yet, please add a cf account first"
 
 
 # cf菜单
 @Client.on_message(filters.command("sf") & filters.private & is_admin)
 async def cf_menu(_, message: Message):
     msg = chat_data["cf_menu"] = await message.reply(
-        text="检测节点中...", reply_markup=InlineKeyboardMarkup(btn())
+        text="Detecting node...", reply_markup=InlineKeyboardMarkup(btn())
     )
     await msg.edit(text=await cf_aaa(), reply_markup=InlineKeyboardMarkup(btn()))
 
@@ -221,7 +221,7 @@ async def get_node_info(url, email, key, zone_id, day):
         code = "⭕️"
     text = f"""
 {url} | {code}
-请求：<code>{request}</code> | 带宽：<code>{pybyte(byte)}</code>
+ask：<code>{request}</code> | bandwidth：<code>{pybyte(byte)}</code>
 ———————"""
 
     return text, byte, code, request
@@ -231,7 +231,7 @@ async def get_node_info(url, email, key, zone_id, day):
 async def send_node_status(query: CallbackQuery, day):
     chat_data["node_status_mode"] = "menu"
     button = [bandwidth_button_a, bandwidth_button_b, bandwidth_button_c, return_button]
-    await query.message.edit(text="检测节点中...", reply_markup=InlineKeyboardMarkup(button))
+    await query.message.edit(text="Detecting node...", reply_markup=InlineKeyboardMarkup(button))
     vv = await get_node_status(day)
     a = [vv[1], vv[2], vv[3], return_button]
     await query.message.edit(text=vv[0][1], reply_markup=InlineKeyboardMarkup(a))
@@ -249,12 +249,12 @@ async def view_bandwidth(_, message: Message):
     day = int(message.command[1]) if message.command[1:] else 0
     cd = f"gns_expansion_{day}"
 
-    msg = await message.reply(text="检测节点中...")
+    msg = await message.reply(text="Detecting node...")
 
     chat_data["node_status_day"] = day
     vv = await get_node_status(day)
     chat_data[f"cd_{message.chat.id}"][cd] = vv
-    state = "🔼点击展开🔼" if chat_data["packUp"] else "🔽点击收起🔽"
+    state = "🔼Click to expand🔼" if chat_data["packUp"] else "🔽Click to collapse🔽"
 
     button = [
         InlineKeyboardButton(state, callback_data=cd)
@@ -272,14 +272,14 @@ async def view_bandwidth(_, message: Message):
 
 # view_bandwidth按钮
 async def view_bandwidth_button(query: CallbackQuery, day):
-    state = "🔼点击展开🔼" if chat_data["packUp"] else "🔽点击收起🔽"
+    state = "🔼Click to expand🔼" if chat_data["packUp"] else "🔽Click to collapse🔽"
     cd = f"gns_expansion_{day}"
     ab = [InlineKeyboardButton(state, callback_data=cd)]
 
     button = [ab, bandwidth_button_a, bandwidth_button_b, bandwidth_button_c]
     if chat_data.get("packUp"):
         button = [ab, bandwidth_button_b, bandwidth_button_c]
-    await query.message.edit(text="检测节点中...", reply_markup=InlineKeyboardMarkup(button))
+    await query.message.edit(text="Detecting node...", reply_markup=InlineKeyboardMarkup(button))
     if vv := chat_data[f"cd_{query.message.chat.id}"].get(cd):
         ...
     else:
@@ -314,10 +314,10 @@ async def get_node_status(s):
     d = date_shift(int(s))
     node_list = nodee()
     if not node_list:
-        return "请先添加账号", [
+        return "Please add account first", [
             [
                 InlineKeyboardButton(
-                    "请先添加账号", callback_data="please_add_an_account_first"
+                    "Please add account first", callback_data="please_add_an_account_first"
                 )
             ]
         ]
@@ -334,10 +334,10 @@ async def get_node_status(s):
     request = f"{int(sum(i[3] for i in results) / 10000)}W"
 
     text_a = f"""
-节点数量：{len(code)}
-🟢  正常：{code.count('🟢')}
-🔴  掉线：{code.count('🔴')}
-⭕️  错误：{code.count('⭕️')}
+Number of nodes：{len(code)}
+🟢  normal：{code.count('🟢')}
+🔴  Dropped：{code.count('🔴')}
+⭕️  mistake：{code.count('⭕️')}
     """
 
     button_b = [
@@ -352,16 +352,16 @@ async def get_node_status(s):
         ),
     ]
     button_c = [
-        InlineKeyboardButton(f"📊总请求：{request}", callback_data="gns_total_bandwidth"),
+        InlineKeyboardButton(f"📊total requests：{request}", callback_data="gns_total_bandwidth"),
         InlineKeyboardButton(
-            f"📈总带宽：{pybyte(total_bandwidth)}",
+            f"📈total bandwidth：{pybyte(total_bandwidth)}",
             callback_data="gns_total_bandwidth",
         ),
     ]
     button_d = [
-        InlineKeyboardButton("🔙上一天", callback_data="gns_status_up"),
+        InlineKeyboardButton("🔙A day", callback_data="gns_status_up"),
         InlineKeyboardButton(d[0], callback_data="gns_status_calendar"),
-        InlineKeyboardButton("下一天🔜", callback_data="gns_status_down"),
+        InlineKeyboardButton("the next day🔜", callback_data="gns_status_down"),
     ]
 
     return [text_a, text_b], button_b, button_c, button_d, code
@@ -370,14 +370,14 @@ async def get_node_status(s):
 # 账号管理
 async def account(query: CallbackQuery):
     text = []
-    button = [InlineKeyboardButton("编辑", callback_data="account_add")]
+    button = [InlineKeyboardButton("edit", callback_data="account_add")]
     if nodee():
         for index, value in enumerate(nodee()):
             text_t = f"{index + 1} | <code>{value['email']}</code> | <code>{value['url']}</code>\n"
             text.append(text_t)
         t = "\n".join(text)
     else:
-        t = "暂无账号"
+        t = "No account yet"
     await query.message.edit(
         text=t, reply_markup=InlineKeyboardMarkup([button, return_button])
     )
@@ -386,13 +386,13 @@ async def account(query: CallbackQuery):
 # 通知设置
 async def cronjob_set(query: CallbackQuery):
     text = f"""
-发送到: `{",".join(list(map(str, cronjob()['chat_id']))) if cronjob()['chat_id'] else None}`
-时间: `{cronjob()['time'] or None}`
+send to: `{",".join(list(map(str, cronjob()['chat_id']))) if cronjob()['chat_id'] else None}`
+time: `{cronjob()['time'] or None}`
 ——————————
-**发送到** | 可以填用户/群组/频道 id，支持多个，用英文逗号隔开
-**时间** | __每日流量统计__发送时间，格式为5位cron表达式
+**send to** | 可以填用户/群组/频道 id，支持多个，用英文逗号隔开
+**time** | __每日流量统计__发送时间，格式为5位cron表达式
 
-chat_id 和 time 一行一个，例：
+chat_id and time One per line, for example：
 `123123,321321
 0 23 * * *`
 """
@@ -420,7 +420,7 @@ async def cronjob_set_edit(_, message: Message):
     write_config("config/cloudflare_cfg.yaml", cloudflare_cfg)
     await message.delete()
     await chat_data["cf_menu"].edit(
-        text=f"设置成功！\n-------\nchat_id：`{cloudflare_cfg['cronjob']['chat_id']}`"
+        text=f"Setup successful！\n-------\nchat_id：`{cloudflare_cfg['cronjob']['chat_id']}`"
         f"\ntime：`{cloudflare_cfg['cronjob']['time']}`",
         reply_markup=InlineKeyboardMarkup([return_button]),
     )
