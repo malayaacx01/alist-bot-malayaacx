@@ -41,11 +41,11 @@ async def download_upload(message: Message):
     # 下载图片
     time.sleep(random.uniform(0.01, 0.2))
     msg = await message.reply_text(
-        text="📥下载图片中...", quote=True, disable_web_page_preview=False
+        text="📥Downloading pictures...", quote=True, disable_web_page_preview=False
     )
     await message.download(file_name=file_name_path)
     # 上传到alist
-    await msg.edit(text="📤上传图片中...", disable_web_page_preview=False)
+    await msg.edit(text="📤Uploading pictures...", disable_web_page_preview=False)
     time.sleep(random.uniform(0.01, 0.2))
     await AListAPI.upload(file_name_path, image_upload_path(), file_name)
 
@@ -53,19 +53,19 @@ async def download_upload(message: Message):
     os.remove(file_name_path)
 
     # 刷新列表
-    await msg.edit(text="🔄刷新列表中...", disable_web_page_preview=False)
+    await msg.edit(text="🔄Refreshing the list...", disable_web_page_preview=False)
     time.sleep(random.uniform(0.01, 0.2))
     await AListAPI.refresh_list(image_upload_path(), 1)
     # 获取文件信息
-    await msg.edit(text="⏳获取链接中...", disable_web_page_preview=False)
+    await msg.edit(text="⏳Getting link...", disable_web_page_preview=False)
     time.sleep(random.uniform(0.01, 0.2))
     get_url = await AListAPI.fs_get(f"{image_upload_path()}/{file_name}")
     image_url = get_url["data"]["raw_url"]  # 直链
 
     text = f"""
-图片名称：<code>{file_name}</code>
-图片链接：<a href="{alist_web}/{image_upload_path()}/{file_name}">打开图片</a>
-图片直链：<a href="{image_url}">下载图片</a>
+Picture name：<code>{file_name}</code>
+image link：<a href="{alist_web}/{image_upload_path()}/{file_name}">Open picture</a>
+Picture direct link：<a href="{image_url}">Download pictures</a>
 Markdown：
 `![{file_name}]({image_url})`
 """
@@ -79,7 +79,7 @@ Markdown：
 async def single_mode(_, message: Message):
     # 检测是否添加了说明
     if caption := message.caption:
-        image_config["image_upload_path"] = None if caption == "关闭" else str(caption)
+        image_config["image_upload_path"] = None if caption == "closure" else str(caption)
         write_config("config/image_cfg.yaml", image_config)
     # 开始运行
     if image_config["image_upload_path"]:
@@ -87,11 +87,11 @@ async def single_mode(_, message: Message):
         thread_pool.submit(asyncio.run, download_upload(message))
     else:
         text = """
-未开启图床功能，请设置上传路径来开启图床
+The image bed function is not enabled. Please set the upload path to enable the image bed.
 
-先选择一张图片，然后在”添加说明“处填写上传路径
-格式: `/图床/测试`
-输入 `关闭` 关闭图床功能
-设置后会自动保存，不用每次都设置
+First select an image and then fill in the upload path in the "Add description" section.
+Format: `/imagebed/test`
+Enter `close` to close the image bed function
+It will be saved automatically after setting, no need to set it every time
 """
         await message.reply(text=text)
