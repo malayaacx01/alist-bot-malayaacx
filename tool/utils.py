@@ -88,7 +88,7 @@ def parse_cron(cron: str, ret_quantity: int = None) -> Union[str, list]:
         c[4] = str(int(c[4]) + 1)
     cron = " ".join(c)
 
-    week_list = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+    week_list = ["Week One", "Week 2", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     str_time_now = datetime.datetime.now()
     cron_iter = croniter(cron, str_time_now)
 
