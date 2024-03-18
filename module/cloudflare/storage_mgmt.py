@@ -23,17 +23,17 @@ async def toggle_auto_management(
     query = message.data
     if query == f"{option}_off":
         cloudflare_cfg["cronjob"][option] = False
-        logger.info(f"已关闭{option}")
+        logger.info(f"closed{option}")
         cc = cloudflare_cfg["cronjob"]
         abc = all(
             not cc[key] for key in ("status_push", "storage_mgmt", "auto_switch_nodes")
         )
         if abc or option == "bandwidth_push":
-            logger.info("节点监控已关闭")
+            logger.info("Node monitoring is turned off")
             aps.pause_job(job_id)
     elif query == f"{option}_on":
         cloudflare_cfg["cronjob"][option] = True
-        logger.info(f"已开启{option}")
+        logger.info(f"Turned on{option}")
         aps.resume_job(job_id=job_id)
         if mode == 0:
             aps.add_job(
@@ -90,7 +90,7 @@ async def auto_switch_nodes(client: Client, message: CallbackQuery):
 async def send_cronjob_bandwidth_push(app):
     if nodee():
         vv = await get_node_status(0)
-        text = "今日流量统计"
+        text = "Today’s traffic statistics"
         for i in cloudflare_cfg["cronjob"]["chat_id"]:
             await app.send_message(
                 chat_id=i, text=text, reply_markup=InlineKeyboardMarkup([vv[1], vv[2]])
@@ -161,7 +161,7 @@ async def failed_node_management(
     try:
         st = await AListAPI.storage_list()
     except Exception:
-        logger.error("自动管理存储错误：获取存储列表失败")
+        logger.error("Auto-manage storage error: Failed to get storage list")
     else:
         task = [
             manage_storage(dc, node, status_code, available_nodes)
@@ -192,27 +192,27 @@ async def manage_storage(dc, node, status_code, available_nodes) -> str:
             dc["down_proxy_url"] = random_node
             d = random_node.replace("https://", "")
 
-            if "节点：" in dc["remark"]:
+            if "node：" in dc["remark"]:
                 dc["remark"] = "\n".join(
                     [
-                        f"节点：{d}" if "节点：" in line else line
+                        f"node：{d}" if "node：" in line else line
                         for line in dc["remark"].split("\n")
                     ]
                 )
             else:
-                dc["remark"] = f"节点：{d}\n{dc['remark']}"
+                dc["remark"] = f"node：{d}\n{dc['remark']}"
 
             await alist.storage_update(dc)
-            return f'🟡|<code>{dc["mount_path"]}</code>\n已自动切换节点: <code>{node}</code> >> <code>{d}</code>'
+            return f'🟡|<code>{dc["mount_path"]}</code>\nThe node has been automatically switched: <code>{node}</code> >> <code>{d}</code>'
         elif cloudflare_cfg["cronjob"]["storage_mgmt"]:
             await alist.storage_disable(dc["id"])
-            return f'🔴|<code>{node}</code>|已关闭存储:\n<code>{dc["mount_path"]}</code>'
+            return f'🔴|<code>{node}</code>|Storage closed:\n<code>{dc["mount_path"]}</code>'
 
 
 # 筛选出可用节点
 async def returns_the_available_nodes(results) -> list:
     """
-    筛选出可用节点，移除已用节点
+    Filter out available nodes and remove used nodes
     :param results:
     :return:
     """
@@ -231,8 +231,8 @@ async def returns_the_available_nodes(results) -> list:
 
 # 发送节点状态
 async def notify_status_change(app: Client, node, status_code):
-    t_l = {200: f"🟢|<code>{node}</code>|恢复", 429: f"🔴|<code>{node}</code>|掉线"}
-    text = t_l.get(status_code, f"⭕️|<code>{node}</code>|故障")
+    t_l = {200: f"🟢|<code>{node}</code>|recover", 429: f"🔴|<code>{node}</code>|Dropped"}
+    text = t_l.get(status_code, f"⭕️|<code>{node}</code>|Fault")
     logger.info(text) if status_code == 200 else logger.warning(text)
 
     if cloudflare_cfg["cronjob"]["status_push"]:
@@ -242,4 +242,4 @@ async def notify_status_change(app: Client, node, status_code):
                     chat_id=chat_id, text=text, parse_mode=ParseMode.HTML
                 )
             except Exception as ex:
-                logger.error(f"节点状态发送失败|{chat_id}::{ex}")
+                logger.error(f"Failed to send node status|{chat_id}::{ex}")
