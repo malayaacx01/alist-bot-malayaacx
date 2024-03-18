@@ -16,12 +16,11 @@ jobs:
       - uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: malayaacx01
+          username: ${{ github.actor }}
           password: ${{ secrets.ALIST_GITHUB_TOKEN }}
 
       - name: Build the  Docker image
         run:
           |
-          docker login --username malayaacx01 --password ${{ secrets.GH_PAT }} ghcr.io
           docker build . --file Dockerfile --tag ghcr.io/malayaacx01/alist-bot-malayaacx:latest 
           docker push ghcr.io/malayaacx01/alist-bot-malayaacx:latest 
