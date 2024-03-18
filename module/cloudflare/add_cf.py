@@ -22,8 +22,8 @@ async def account_add_callback(_, query: CallbackQuery):
 async def account_add(query: CallbackQuery):
     text = []
     chat_data["account_add_return_button"] = [
-        InlineKeyboardButton("↩️返回账号", callback_data="account_return"),
-        InlineKeyboardButton("❌关闭菜单", callback_data="cf_close"),
+        InlineKeyboardButton("↩️Return to account", callback_data="account_return"),
+        InlineKeyboardButton("❌Close menu", callback_data="cf_close"),
     ]
     if nodee():
         for index, value in enumerate(nodee()):
@@ -31,17 +31,17 @@ async def account_add(query: CallbackQuery):
             text.append(text_t)
         t = "\n".join(text)
     else:
-        t = "暂无账号"
+        t = "No account yet"
     tt = """
 ——————————————
-<b>添加：</b>
-一次只能添加一个账号
-第一行cf邮箱，第二行global_api_key，例：
+<b>Add to：</b>
+Only one account can be added at a time
+The first line is cf mailbox, the second line is global_api_key, for example：
 <code>abc123@qq.com
 285812f3012365412d33398713c156e2db314
 </code>
-<b>删除：</b>
-*+序号，例：<code>*2</code>
+<b>delete：</b>
+*+Serial number, e.g.：<code>*2</code>
 """
     await query.message.edit(
         text=t + tt,
@@ -73,7 +73,7 @@ async def account_edit(_, message: Message):
             lf = await list_filters(i[0], i[1], zone_id)  # 获取url
             lf = lf.json()
         except Exception as e:
-            await chat_data["ad_message"].answer(text=f"错误：{str(e)}")
+            await chat_data["ad_message"].answer(text=f"mistake：{str(e)}")
         else:
             if lf["result"]:
                 url = lf["result"][0]["pattern"].rstrip("/*")
@@ -92,14 +92,14 @@ async def account_edit(_, message: Message):
                 await account_add(chat_data["ad_message"])
             else:
                 text = f"""
-<b>添加失败: </b>
+<b>add failed: </b>
 
 <code>{mt}</code>
 
-该域名（<code>{lz['result'][0]['name']}</code>）未添加Workers路由
-请检查后重新发送账号
+the domain name（<code>{lz['result'][0]['name']}</code>）Workers route not added
+Please check and resend the account
 
-<b>注：</b>默认使用第一个域名的第一个Workers路由
+<b>Note：</b>By default, the first Workers route of the first domain name is used
 """
                 await chat_data["ad_message"].message.edit(
                     text=text,
