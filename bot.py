@@ -158,7 +158,7 @@ async def recovery_send_backup_file():
         chat_id=admin, document=bc_file_name, caption="#Alist - Configure scheduled backup"
     )
     os.remove(bc_file_name)
-    logger.info("定时备份成功")
+    logger.info("Scheduled backup successful")
 
 
 # 设置备份时间&开启定时备份
@@ -192,20 +192,20 @@ async def set_backup_time(_, message: Message):
         await message.reply("Scheduled backup is turned off")
     elif not mtime:
         text = f"""
-格式：/sbt + 5位cron表达式，0为关闭
+Format：/sbt + 5-bit cron expression，0 is off
 Next backup time：`{parse_cron(backup_time()) if backup_time() != '0' else 'closed'}`
 
-例：
-<code>/sbt 0</code> 关闭定时备份
-<code>/sbt 0 8 * * *</code> 每天上午8点运行
-<code>/sbt 30 20 */3 * *</code> 每3天晚上8点30运行
+example：
+<code>/sbt 0</code> Turn off scheduled backup
+<code>/sbt 0 8 * * *</code> Runs daily at 8am
+<code>/sbt 30 20 */3 * *</code> Runs every 3 days at 8:30pm
 
- 5位cron表达式格式说明
-  ——分钟（0 - 59）
- |  ——小时（0 - 23）
- | |  ——日（1 - 31）
- | | |  ——月（1 - 12）
- | | | |  ——星期（0 - 6，0是星期一）
+ 5-digit cron expression format description
+  ——Minute（0 - 59）
+ |  ——Hour（0 - 23）
+ | |  ——Day（1 - 31）
+ | | |  ——Month（1 - 12）
+ | | | |  ——Week（0 - 6，0 is the day of the Week一）
  | | | | |
  * * * * *
 
